@@ -5,14 +5,16 @@ var bannedBlock = [8, 9, 79, 0];
 var waterBlock = [8, 9];
 
 var state = {
-		smartMoving: true,
-		run: false,
-		fly: false,
-		water: false
+	smartMoving: true,
+	run: false,
+	fly: false,
+	water: false,
+	sneak: false
 };
 var doubleTouch = {
-		onTick: 0,
-		offTick: 0
+	onTick: 0,
+	offTick: 0,
+	axisSpeed: -1
 };
 var playerPos = new Vec3();
 playerPos.speed = -1;
@@ -66,9 +68,9 @@ function modTick() {
 		we = Entity.getVelZ(Player.getEntity());
 		ModPE.setFov(72 + playerPos.speed * 15);
 		if (!state.fly) {
-			if (playerPos.speed > 0.01){
+			/*if (playerPos.speed > 0.01){
 				cm(playerPos.speed);
-			}
+			}*/
 			switch (doubleTouch.onTick) {
 			case -1:
 				if (playerPos.speed < 0.01) {
@@ -79,9 +81,9 @@ function modTick() {
 				}
 				break;
 			case 0:
-				if (playerPos.speed > 0.06) {
+				if (playerPos.speed > 0.03) {
 					doubleTouch.onTick ++;
-					doubleTouch.speed = playerPos.speed;
+					doubleTouch.axisSpeed = playerPos.speed;
 					if (ns > 0 && we > 0) {
 						playerPos.compass = "1"
 					}else if (ns < 0 && we < 0) {
@@ -94,15 +96,16 @@ function modTick() {
 				}
 				break;
 			case 1:
-				if (doubleTouch.offTick > 10) {
+				if (doubleTouch.offTick > 15) {
 					doubleTouch.onTick = -1;
 					doubleTouch.offTick = 0;
 				}
-				if (playerPos.speed < 0.06) {
+				if (playerPos.speed < doubleTouch.axisSpeed) {
 					doubleTouch.onTick ++;
 					doubleTouch.offTick = 0;
 				}else {
 					doubleTouch.offTick ++;
+					doubleTouch.axisSpeed = playerPos.speed;
 				}
 				break;
 			case 2:
@@ -110,7 +113,7 @@ function modTick() {
 					doubleTouch.onTick = -1;
 					doubleTouch.offTick = 0;
 				}
-				if (playerPos.speed > 0.06) {
+				if (playerPos.speed > doubleTouch.axisSpeed) {
 					doubleTouch.onTick ++;
 					doubleTouch.offTick = 0;
 					if (ns > 0 && we > 0) {
@@ -124,20 +127,26 @@ function modTick() {
 					}
 				}else {
 					doubleTouch.offTick ++;
+					doubleTouch.axisSpeed = playerPos.speed;
 				}
 				break;
-			case 3:
+			case 3: //touchImpact
 				doubleTouch.onTick = 0;
 				doubleTouch.offTick = 0;
-				if (playerPos.compass == "11") {//touchImpact
-					if (playerPos.speed > 0.06) {
-						state.run = true;
-						doubleTouch.onTick = -1;
+				if (playerPos.compass == "11") {
+					if (state.sneak) {
+						state.sneak = false;
+				    	Entity.setSneaking(Player.getEntity(), false);
 					}else {
+						if (playerPos.speed > 0.06) {
+					    	state.run = true;
+				     		doubleTouch.onTick = -1;
+					    }
 					}
 				}else if (playerPos.compass == "22") {
-					if (playerPos.speed > 0.06) {
-					}else {
+					if (!state.sneak) {
+						state.sneak = true;
+				    	Entity.setSneaking(Player.getEntity(), true);
 					}
 				}else if (playerPos.compass == "33") {
 					if (playerPos.speed > 0.06) {
