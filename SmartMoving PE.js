@@ -64,13 +64,13 @@ function modTick() {
 		yaw = Entity.getYaw(Player.getEntity())+360;
 		sin = -Math.sin(yaw / 180 * Math.PI);
 		cos = Math.cos(yaw / 180 * Math.PI);
-		ns = Entity.getVelX(Player.getEntity());
-		we = Entity.getVelZ(Player.getEntity());
+		ns = Entity.getVelX(Player.getEntity()) * sin;
+		we = Entity.getVelZ(Player.getEntity()) * cos;
 		ModPE.setFov(72 + playerPos.speed * 15);
 		if (!state.fly) {
-			/*if (playerPos.speed > 0.01){
-				cm(playerPos.speed);
-			}*/
+			if (playerPos.speed > 0.01){
+				//cm("Speed: "+playerPos.speed+"\n ns: "+ns+"\n we: "+we);
+			}
 			switch (doubleTouch.onTick) {
 			case -1:
 				if (playerPos.speed < 0.01) {
@@ -160,8 +160,8 @@ function modTick() {
 				break;
 			}
 			if (state.run && !state.water && !isBannedBlockUnder() && Entity.getVelY(Player.getEntity()) < 0.01) {
-				Entity.setVelX(Player.getEntity(), ns*1.32);
-				Entity.setVelZ(Player.getEntity(), we*1.32);
+				Entity.setVelX(Player.getEntity(), Entity.getVelX(Player.getEntity()) * 1.32);
+				Entity.setVelZ(Player.getEntity(), Entity.getVelZ(Player.getEntity()) * 1.32);
 				//makeFootprint();
 			}
 		}else {
