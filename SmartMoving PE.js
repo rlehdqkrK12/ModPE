@@ -16,11 +16,12 @@ var doubleTouch = {
 	offTick: 0,
 	axisSpeed: -1
 };
-var playerPos = new Vec3();
-playerPos.speed = -1;
-playerPos.compass = null;
+var playerPos = {
+	speed: -1,
+	compass: null
+};
 
-function Vec3(x, y, z) {
+/*function Vec3(x, y, z) {
 	if (x === undefined) x = -1;
 	if (y === undefined) y = -1;
 	if (z === undefined) z = -1;
@@ -40,7 +41,7 @@ Vec3.prototype.toArray = function() {
 };
 Vec3.prototype.equals = function(vec3) {
 	return this.x === vec3.x && this.y === vec3.y && this.z === vec3.z;
-};
+};*/
 function getEntitySpeed(entity) {
 	return Math.sqrt(Entity.getVelX(entity) * Entity.getVelX(entity) + Entity.getVelZ(entity) * Entity.getVelZ(entity));
 }
@@ -148,18 +149,10 @@ function modTick() {
 						state.sneak = true;
 				    	Entity.setSneaking(Player.getEntity(), true);
 					}
-				}else if (playerPos.compass == "33") {
-					if (playerPos.speed > 0.06) {
-					}else {
-					}
-				}else if (playerPos.compass == "44") {
-					if (playerPos.speed > 0.06) {
-					}else {
-					}
 				}
 				break;
 			}
-			if (state.run && !state.water && !isBannedBlockUnder() && Entity.getVelY(Player.getEntity()) < 0.01) {
+			if (state.run && !state.water && !isBannedBlockUnder() && Entity.getVelY(Player.getEntity()) < 0.1 && Entity.getVelY(Player.getEntity()) > -0.1 ) {
 				Entity.setVelX(Player.getEntity(), Entity.getVelX(Player.getEntity()) * 1.32);
 				Entity.setVelZ(Player.getEntity(), Entity.getVelZ(Player.getEntity()) * 1.32);
 				//makeFootprint();
